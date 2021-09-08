@@ -1,0 +1,77 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: esearch
+  name: esearch-cluster
+spec:
+  ports:
+  - port: 9300
+  selector:
+    app: esearch
+  
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    app: esearch
+  name: esearch-claim
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: esearch
+  name: esearch
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: esearch
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: esearch
+    spec:
+      containers:
+      - env:
+        - name: ES_JAVA_OPTS
+          value: -Xms1g -Xmx1g
+        - name: LCP_PROJECT_ENVIRONMENT
+          value: local
+        - name: LCP_SERVICE_ID
+          value: esearch
+        - name: LCP_SERVICE_SCALE
+          value: "1"
+        - name: cluster.routing.allocation.disk.threshold_enabled
+          value: "false"
+        - name: discovery.type
+          value: single-node
+        image: docker.elastic.co/elasticsearch/elasticsearch:7.9.0
+        resources:
+          limits:
+            memory: "2048Mi"
+            cpu: "1"
+        ports:
+        - containerPort: 9300
+        name: search
+        volumeMounts:
+        - mountPath: /lcp-container
+          name: esearch-claim
+      restartPolicy: Always
+      volumes:
+      - name: esearch-claim
+        persistentVolumeClaim:
+          claimName: esearch-claim
