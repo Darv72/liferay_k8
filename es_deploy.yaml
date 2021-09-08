@@ -17,7 +17,7 @@ kind: PersistentVolumeClaim
 metadata:
   labels:
     app: esearch
-  name: esearch-claim
+  name: esearch-data
 spec:
   accessModes:
   - ReadWriteOnce
@@ -66,12 +66,12 @@ spec:
             cpu: "1"
         ports:
         - containerPort: 9300
-        name: search
+        name: esearch
         volumeMounts:
         - mountPath: /lcp-container
-          name: esearch-claim
+          name: esearch-data
       restartPolicy: Always
       volumes:
-      - name: esearch-claim
+      - name: esearch-data
         persistentVolumeClaim:
-          claimName: esearch-claim
+          claimName: esearch-data
