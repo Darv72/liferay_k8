@@ -1,1 +1,1 @@
-# lr_openshift
+# liferay_k8
