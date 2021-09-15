@@ -76,10 +76,10 @@ spec:
         resources:
           requests:
             memory: "2048Mi"
-            cpu: "1"
+            cpu: "2"
           limits:
-            memory: "2048Mi"
-            cpu: "1"
+            memory: "4098Mi"
+            cpu: "3"
         name: liferay 
         ports:
         - containerPort: 11311
