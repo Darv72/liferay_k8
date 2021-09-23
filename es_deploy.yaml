@@ -6,7 +6,7 @@ metadata:
   name: esearch-cluster
 spec:
   ports:
-  - port: 9300
+  - port: 9200
   selector:
     app: esearch
   
@@ -52,20 +52,20 @@ spec:
         - name: LCP_PROJECT_ENVIRONMENT
           value: local
         - name: LCP_SERVICE_ID
-          value: esearch
+          value: search
         - name: LCP_SERVICE_SCALE
           value: "1"
-        - name: cluster.routing.allocation.disk.threshold_enabled
-          value: "false"
-        - name: discovery.type
-          value: single-node
-        image: docker.elastic.co/elasticsearch/elasticsearch:7.9.0
+        - name: CLUSTER_NAME
+          value: liferay-cluster
+        - name: HOSTNAME
+          value: lr-node1
+        image: liferaycloud/elasticsearch:7.9.3-4.1.1
         resources:
           limits:
             memory: "2048Mi"
             cpu: "1"
         ports:
-        - containerPort: 9300
+        - containerPort: 9200
         name: esearch
         volumeMounts:
         - mountPath: /lcp-container
