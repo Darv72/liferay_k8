@@ -1,5 +1,5 @@
 # liferay_k8
-This readme assumes that the user has access to a Kubernetes environment, in my case I used an instance of Minikube, and that a namespace has been defined. Once checked out run the following from the root of this repo:
+This readme assumes that the user has access to a local Kubernetes environment, in my case I used an instance of Minikube, and that a namespace has been defined. Once checked out run the following from the root of this repo:
 
 kubectl create -f <X>_deploy.yaml -n=<namespace>
 
