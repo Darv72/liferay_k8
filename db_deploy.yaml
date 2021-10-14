@@ -72,7 +72,7 @@ spec:
         - containerPort: 3306
         name: database
         volumeMounts:
-        - mountPath: /var/lib/mysql
+        - mountPath: /var/lib/minesql
           name: database-data
       restartPolicy: Always
       volumes:
