@@ -5,9 +5,9 @@ metadata:
     app: liferay
   name: liferay-cluster
 spec:
+  type: ClusterIP
   ports:
-  - name: "8080"
-    port: 8080
+  - port: 8080
   selector:
     app: liferay
 
@@ -86,21 +86,6 @@ spec:
         ports:
         - containerPort: 11311
         - containerPort: 8080
-        readinessProbe:
-          httpGet:
-            path: "/c/portal/layout"
-            port: 8080
-          initialDelaySeconds: 120
-          periodSeconds: 15
-          failureThreshold: 3
-          successThreshold: 3
-        livenessProbe:
-          tcpSocket:
-            port: 8080
-          initialDelaySeconds: 120
-          periodSeconds: 20
-          failureThreshold: 3
-          successThreshold: 1
         volumeMounts:
         - mountPath: /opt/liferay/data
           name: liferay-data
