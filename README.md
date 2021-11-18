@@ -3,7 +3,7 @@
 ## AKS Quickstart
 This readme assumes that access to an AKS cluster is in place and that the AzureCLI tools have been installed and all noted commands are run locally.  First connect to the Azure Portal using the following:
 
-az login
+> az login
 
 Once authenticated you will need to connect to the AKS cluster.  The required command can be found on the Connect tab of the AKS cluster and will follow a syntax like this:
 
