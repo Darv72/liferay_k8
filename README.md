@@ -1,27 +1,33 @@
 # liferay_k8
-This readme assumes that the user has access to a local Kubernetes environment, in my case I used an instance of Minikube, and that a namespace has been defined. Once checked out run the following from the root of this repo:
 
-kubectl create -f <X>_deploy.yaml -n=<namespace>
+##AKS Quickstart
+This readme assumes that access to an AKS cluster is in place and that the AzureCLI tools have been installed and all noted commands are run locally.  First connect to the Azure Portal using the following:
 
-Where X is the application manifest you wish to deploy and namespace is the namespace defined in the Kubernetes instance.  For example to create the components defined for Liferay in a namespace called liferay the command to deploy would be:
-  
-kubectl create -f lr_deploy.yaml -n=liferay
-  
-If you want to delete all components created in this manner run the following command:
-  
-kubectl delete -f <X>_deploy.yaml -n=<namespace>
+az login
 
+Once authenticated you will need to connect to the AKS cluster.  The required command can be found on the Connect tab of the AKS cluster and will follow a syntax like this:
+
+az aks get-credentials --resource-group <resourcegroup> --name <clustername>
+
+To deploy any of the manifests included in this repo into AKS first clone the repo to your local PC then run the following command:
+
+kubectl apply -f <X>_deploy.yaml
+  
+Where X is the application manifest you wish to deploy.  To delete any of the items defined within the manifest run the following:
+  
+kubectl delete -f <X>_deploy.yaml
+  
 Once all three applications have been deployed it will be neccassary to copy over the configuration files needed for Liferay to connect to the database and Elasticsearch.  These files are found in the /mount directory.  To do so run the following commands:
   
 Identify the name of the pod Liferay is running in:
-kubectl get pods -l app=liferay -n=<namespace>
+kubectl get pods
 
 Example output:
 NAME                       READY   STATUS    RESTARTS   AGE
 liferay-556cdc748f-nk7wz   1/1     Running   0          3h10m
-  
-Then copy the files to that pod with the following command:
-kubectl cp ./mount/files liferay-556cdc748f-nk7wz:/mnt/liferay -n=<namespace>
 
+Then copy the files to that pod with the following command:
+kubectl cp ./mount/files liferay-556cdc748f-nk7wz:/mnt/liferay
+  
 Then delete the Liferay pod, the pod will restart and apply the newly copied config files on startup:
 kubectl delete -n liferay pod liferay-556cdc748f-nk7wz
