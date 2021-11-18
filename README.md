@@ -1,6 +1,6 @@
 # liferay_k8
 
-##AKS Quickstart
+## AKS Quickstart
 This readme assumes that access to an AKS cluster is in place and that the AzureCLI tools have been installed and all noted commands are run locally.  First connect to the Azure Portal using the following:
 
 az login
