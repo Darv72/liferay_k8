@@ -23,8 +23,8 @@ Identify the name of the pod Liferay is running in:
 > kubectl get pods
 
 Example output:
-> NAME                       READY   STATUS    RESTARTS   AGE
-> liferay-556cdc748f-nk7wz   1/1     Running   0          3h10m
+NAME                       READY   STATUS    RESTARTS   AGE
+liferay-556cdc748f-nk7wz   1/1     Running   0          3h10m
 
 Then copy the files to that pod with the following command:
 > kubectl cp ./mount/files liferay-556cdc748f-nk7wz:/mnt/liferay
