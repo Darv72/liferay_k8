@@ -1,5 +1,8 @@
 # liferay_k8
 
+## Overview
+The manifests within this repo can be used to deploy a basic Liferay stack onto an Azure Kubernetes cluster.  The image used in the Elasticsearch manifest uses a build that was created by Liferay and includes the necessary plugins required to run Elasticsearch with Liferay.
+
 ## AKS Quickstart
 This readme assumes that access to an AKS cluster is in place and that the AzureCLI tools have been installed and all noted commands are run locally.  First connect to the Azure Portal using the following:
 
