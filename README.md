@@ -59,7 +59,13 @@ Once the route has been completed you can check on it's status with the followin
 
 > kubectl get ingress
 
-The output should look like this, once the External IP Address has been defined you should be able to access Liferay by putting that IP into your browser.
+The output should look like this:
+
+| NAME | CLASS | HOSTS | ADDRESS | PORTS | AGE |
+| --- | --- | --- | --- | --- | --- |
+| nginx-ingress | <none> | * | 52.139.7.62 | 80 |7m30s |
+
+Once the Address has been defined you should be able to access Liferay by putting that IP into your browser.
 
   
  
