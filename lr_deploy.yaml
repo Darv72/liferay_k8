@@ -3,7 +3,7 @@ kind: Service
 metadata:
   labels:
     app: liferay
-  name: liferay-cluster
+  name: liferay
 spec:
   type: ClusterIP
   ports:
@@ -16,15 +16,13 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  labels:
-    app: liferay
   name: liferay-data
 spec:
   accessModes:
   - ReadWriteOnce
   resources:
     requests:
-      storage: 100Mi
+      storage: 5Gi
 
 
 ---
@@ -32,16 +30,42 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  labels:
-    app: liferay
   name: liferay-config
 spec:
   accessModes:
   - ReadWriteOnce
   resources:
     requests:
-      storage: 100Mi
+      storage: 5Gi
 
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: liferay-portext
+data:
+  portal-ext.properties: |
+    ######### Database ############
+    jdbc.default.driverClassName=com.mysql.cj.jdbc.Driver 
+    jdbc.default.url=jdbc:mysql://mysql:3306/lportal
+    jdbc.default.username=liferay
+    jdbc.default.password=password
+    ## Company ##
+    company.security.auth.type=screenName
+    
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: es-config
+data:
+  es.properties: |
+    clusterName="liferay-cluster"
+    networkHostAddresses=["http://elasticsearch:9200"]
+    operationMode="REMOTE"
+    
 ---
 
 apiVersion: apps/v1
@@ -68,34 +92,42 @@ spec:
       - env: 
         - name: LIFERAY_JAVA_OPTS 
           value: -Xms2g -Xmx2g
-        - name: LIFERAY_MODULE_PERIOD_FRAMEWORK_PERIOD_PROPERTIES_PERIOD_OSGI_PERIOD_CONSOLE
-          value: 0.0.0.0:11311
-        - name: LIFERAY_WEB_PERIOD_SERVER_PERIOD_DISPLAY_PERIOD_NODE
-          value: "true"
-        - name: LIFERAY_REDIRECT_PERIOD_URL_PERIOD_SECURITY_PERIOD_MODE
-          value: "domain"
         image: liferay/dxp:7.3.10-dxp-2
         resources:
-          requests:
-            memory: "2048Mi"
-            cpu: "1"
           limits:
             memory: "4098Mi"
-            cpu: "1"
+            cpu: "2"
         name: liferay 
         ports:
-        - containerPort: 11311
         - containerPort: 8080
         volumeMounts:
         - mountPath: /opt/liferay/data
-          name: liferay-data
+          name: data
         - mountPath: /mnt/liferay
-          name: liferay-config
+          name: config
+        - mountPath: /mnt/liferay/files/portal-ext.properties
+          name: portext
+          subPath: portal-ext.properties
+        - mountPath: /opt/liferay/osgi/configs/com.liferay.portal.search.elasticsearch7.configuration.ElasticsearchConfiguration.config
+          name: elasticsearch
+          subPath: com.liferay.portal.search.elasticsearch7.configuration.ElasticsearchConfiguration.config
       restartPolicy: Always
       volumes:
-      - name: liferay-data
+      - name: data
         persistentVolumeClaim:
           claimName: liferay-data
-      - name: liferay-config
+      - name: config
         persistentVolumeClaim:
           claimName: liferay-config
+      - name: portext
+        configMap:
+          name: liferay-portext
+          items:
+          - key: "portal-ext.properties"
+            path: "portal-ext.properties"
+      - name: elasticsearch
+        configMap:
+          name: es-config
+          items:
+          - key: "es.properties"
+            path: "com.liferay.portal.search.elasticsearch7.configuration.ElasticsearchConfiguration.config"

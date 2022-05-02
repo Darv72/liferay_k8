@@ -2,8 +2,8 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app: database
-  name: database-cluster
+    app: liferay
+  name: mysql
 spec:
   ports:
   - port: 3306
@@ -16,17 +16,14 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  labels:
-    app: database
-  name: database-data
+  name: mysql-data
 spec:
   accessModes:
   - ReadWriteOnce
   resources:
     requests:
-      storage: 100Mi
-      
-      
+      storage: 5Gi
+        
 ---
 
 
@@ -34,15 +31,12 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: database
-  name: database
+    app: liferay
+  name: mysql
 spec:
-  replicas: 1
   selector:
     matchLabels:
       app: database
-  strategy:
-    type: Recreate
   template:
     metadata:
       labels:
@@ -50,32 +44,24 @@ spec:
     spec:
       containers:
       - args:
-        - mysqld
-        - --character-set-server=utf8
-        - --collation-server=utf8_general_ci
-        - --character-set-filesystem=utf8
+        - "--ignore-db-dir=lost+found"
         env:
         - name: MYSQL_DATABASE
           value: lportal
+        - name: MYSQL_USER
+          value: liferay
         - name: MYSQL_PASSWORD
           value: password
         - name: MYSQL_ROOT_PASSWORD
-          value: password
-        - name: MYSQL_USER
-          value: liferay
+          value: password1
         image: mysql:5.7.29
-        resources:
-          limits:
-            memory: "512Mi"
-            cpu: "0.5"
         ports:
         - containerPort: 3306
         name: database
         volumeMounts:
-        - mountPath: /var/lib/minesql
-          name: database-data
-      restartPolicy: Always
+        - mountPath: /var/lib/mysql
+          name: data
       volumes:
-      - name: database-data
+      - name: data
         persistentVolumeClaim:
-          claimName: database-data
+          claimName: mysql-data
