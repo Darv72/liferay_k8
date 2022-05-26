@@ -99,7 +99,7 @@ spec:
       - env: 
         - name: LIFERAY_JAVA_OPTS 
           value: -Xms2g -Xmx2g
-        image: liferay/dxp:7.3.10-dxp-2
+        image: liferay/dxp:7.3.10-dxp-3
         resources:
           limits:
             memory: "4098Mi"
